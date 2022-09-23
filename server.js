@@ -5,7 +5,7 @@ const fetch4chan = require('./fetch4chan.js');
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:5173", "http://192.168.0.110:5173", "http://192.168.0.109", "http://localhost:8080"]
+const allowedOrigins = ["https://mer7z.github.io/chans/"]
 
 app.use(
   cors({
