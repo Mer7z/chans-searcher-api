@@ -29,8 +29,10 @@ async function refreshBoards(){
     });
   }
   for(const board of boardsLetters){
-    const threads = await load(board);
-    boards.push({board, threads});
+    if(board !== 'f'){
+      const threads = await load(board);
+      boards.push({board, threads});
+    }
   }
 
   // boards.forEach(async (board) =>{
