@@ -59,7 +59,9 @@ async function load(board){
       teaser: threadObj.teaser,
       replies: threadObj.r,
       imgReplies: threadObj.i,
-      board
+      board,
+      author: threadObj.author,
+      imgurl: `https://i.4cdn.org/${board}/${threadObj.imgurl}s.jpg`
     }
     threads.push(resultObj);
   })
