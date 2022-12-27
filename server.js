@@ -5,7 +5,7 @@ const fetch4chan = require('./fetch4chan.js');
 
 const app = express();
 
-const allowedOrigins = ["https://mer7z.github.io", "http://localhost:5173", "http://192.168.0.110:5173"]
+const allowedOrigins = ["https://mer7z.github.io", "http://localhost:5173", "http://192.168.0.110:5173", "http://127.0.0.1:5500"]
 
 app.use(
   cors({
@@ -76,7 +76,7 @@ async function startServer() {
       const search = req.query.q;
       threads.forEach(thread => {
         const teaser = thread.teaser;
-        const subject = thread.teaser;
+        const subject = thread.sub;
         const condition = teaser.includes(_.lowerCase(search)) ||
           teaser.includes(_.upperCase(search)) ||
           teaser.includes(_.upperFirst(search)) ||
