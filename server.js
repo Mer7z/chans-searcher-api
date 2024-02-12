@@ -1,5 +1,5 @@
 const express = require('express');
-const _ = require('lodash');
+// const _ = require('lodash');
 const cors = require('cors');
 const fetch4chan = require('./fetch4chan.js');
 
@@ -26,22 +26,22 @@ app.use(
 const PORT = process.env.PORT || 8080
 
 async function startServer() {
-  const fetchInit = await fetch4chan();
-  var boardsArr = fetch4chan.boards();
+  // await fetch4chan.init();
+  var boardsArr = fetch4chan.boards; //All boards
 
   //refresh
-  const refresh = () =>{
-    setTimeout(async () => {
-      const init = await fetch4chan();
-      boardsArr = fetch4chan.boards();
-      refresh()
-    }, 300000);
-  }
+  // const refresh = () =>{
+  //   setTimeout(async () => {
+  //     const init = await fetch4chan.init();
+  //     boardsArr = fetch4chan.boards;
+  //     refresh()
+  //   }, 300000);
+  // }
 
-  refresh();
+  // refresh();
 
-  app.get('/', (req, res) => {
-    let threads = getThreads();
+  app.get('/', async (req, res) => {
+    let threads = await getThreads();
     let result = [];
     
     if(req.query.q){
@@ -49,13 +49,7 @@ async function startServer() {
       threads.forEach(thread => {
         const teaser = thread.teaser;
         const subject = thread.teaser;
-        const condition = teaser.includes(" "+_.lowerCase(search)+" ") ||
-          teaser.includes(" "+_.upperCase(search)+" ") ||
-          teaser.includes(" "+_.upperFirst(search)+" ") ||
-          teaser.includes(" "+search+" ") || subject.includes(" "+_.lowerCase(search)+" ") ||
-          subject.includes(" "+_.upperCase(search)+" ") ||
-          subject.includes(" "+_.upperFirst(search)+" ") ||
-          subject.includes(" "+search+" ");
+        const condition = (teaser.toLowerCase().includes(search.toLowerCase())) || (subject.toLowerCase().includes(search.toLowerCase()))
   
         if (condition) {
           result.push(thread);
@@ -67,9 +61,10 @@ async function startServer() {
     res.json(result);
   })
 
-  app.get('/:board', (req, res) =>{
+  app.get('/:board', async (req, res) =>{
     const board = req.params.board;
-    let threads = getThreads(board);
+    let threads = await getThreads(board);
+    console.log(threads)
     let result = [];
 
     if(req.query.q){
@@ -77,13 +72,7 @@ async function startServer() {
       threads.forEach(thread => {
         const teaser = thread.teaser;
         const subject = thread.sub;
-        const condition = teaser.includes(_.lowerCase(search)) ||
-          teaser.includes(_.upperCase(search)) ||
-          teaser.includes(_.upperFirst(search)) ||
-          teaser.includes(search) || subject.includes(_.lowerCase(search)) ||
-          subject.includes(_.upperCase(search)) ||
-          subject.includes(_.upperFirst(search)) ||
-          subject.includes(search);
+        const condition = (teaser.toLowerCase().includes(search.toLowerCase())) || (subject.toLowerCase().includes(search.toLowerCase()))
   
         if (condition) {
           result.push(thread);
@@ -96,25 +85,32 @@ async function startServer() {
     res.json(result);
   })
 
+  //refresh
+  const refresh = () =>{
+    setTimeout(async () => {
+      const init = await fetch4chan.init();
+      boardsArr = fetch4chan.boards;
+      refresh()
+    }, 300000);
+  }
 
   //get threads
-  const getThreads = (b = "") => {
+  const getThreads = async (b = "") => {
     let threads = [];
     if (b === "all" || b === "") {
+      if(boardsArr.length === 0){
+        await fetch4chan.init()
+        boardsArr = fetch4chan.boards
+        refresh()
+      }
       boardsArr.forEach(board => {
         if(board.threads){
-          board.threads.forEach(thread => {
-            threads.push(thread);
-          });
+          threads = [...threads, ...board.threads]
         }
       });
       return threads;
     } else {
-      boardsArr.forEach(board => {
-        if (board.board === b) {
-          threads = board.threads;
-        }
-      });
+      threads = await fetch4chan.loadThreads(b)
       return threads;
     }
 
