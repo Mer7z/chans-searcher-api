@@ -49,7 +49,7 @@ async function startServer() {
       threads.forEach(thread => {
         const teaser = thread.teaser;
         const subject = thread.teaser;
-        const condition = (teaser?.toLowerCase().includes(search?.toLowerCase())) || (subject?.toLowerCase().includes(search?.toLowerCase()))
+        const condition = (typeof teaser === 'string' && teaser?.toLowerCase().includes(search?.toLowerCase())) || (typeof subject === 'string' && subject?.toLowerCase().includes(search?.toLowerCase()))
   
         if (condition) {
           result.push(thread);
@@ -71,7 +71,7 @@ async function startServer() {
       threads.forEach(thread => {
         const teaser = thread.teaser;
         const subject = thread.sub;
-        const condition = (teaser?.toLowerCase().includes(search?.toLowerCase())) || (subject?.toLowerCase().includes(search?.toLowerCase()))
+        const condition = (teaser?.toLowerCase().includes(search?.toLowerCase())) || (typeof subject === 'string' && subject?.toLowerCase().includes(search?.toLowerCase()))
   
         if (condition) {
           result.push(thread);
