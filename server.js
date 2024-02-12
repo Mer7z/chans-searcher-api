@@ -49,7 +49,7 @@ async function startServer() {
       threads.forEach(thread => {
         const teaser = thread.teaser;
         const subject = thread.teaser;
-        const condition = (teaser.toLowerCase().includes(search.toLowerCase())) || (subject.toLowerCase().includes(search.toLowerCase()))
+        const condition = (teaser?.toLowerCase().includes(search?.toLowerCase())) || (subject?.toLowerCase().includes(search?.toLowerCase()))
   
         if (condition) {
           result.push(thread);
@@ -64,7 +64,6 @@ async function startServer() {
   app.get('/:board', async (req, res) =>{
     const board = req.params.board;
     let threads = await getThreads(board);
-    console.log(threads)
     let result = [];
 
     if(req.query.q){
@@ -72,7 +71,7 @@ async function startServer() {
       threads.forEach(thread => {
         const teaser = thread.teaser;
         const subject = thread.sub;
-        const condition = (teaser.toLowerCase().includes(search.toLowerCase())) || (subject.toLowerCase().includes(search.toLowerCase()))
+        const condition = (teaser?.toLowerCase().includes(search?.toLowerCase())) || (subject?.toLowerCase().includes(search?.toLowerCase()))
   
         if (condition) {
           result.push(thread);
