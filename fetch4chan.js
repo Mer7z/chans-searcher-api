@@ -8,14 +8,17 @@ var boards = [];
 const boardsLetters = [];
 
 
-module.exports = init;
-module.exports.boards = () =>{
-  return boards;
-};
+module.exports = {
+  init,
+  get boards() {
+    return boards
+  },
+  loadThreads
+}
 
 async function init(){
   boards = [];
-  const refresh = await refreshBoards();
+  await refreshBoards();
 }
 
 async function refreshBoards(){
@@ -23,24 +26,20 @@ async function refreshBoards(){
   if(boardsLetters.length === 0){
     const response = await axios.get(url + 'b');
     let $ = cheerio.load(response.data);
-    const letters = $("#boardNavDesktop .boardList a").each((i, a) =>{
+    $("#boardNavDesktop .boardList a").each((i, a) =>{
       const letter = $(a).text();
       boardsLetters.push(letter);
     });
   }
   for(const board of boardsLetters){
     if(board !== 'f'){
-      const threads = await load(board);
+      const threads = await loadThreads(board);
       boards.push({board, threads});
     }
   }
-
-  // boards.forEach(async (board) =>{
-  //   board.threads = await load(board.board);
-  // })
 }
 
-async function load(board){
+async function loadThreads(board){
   try {
     const response = await axios.get(url + board + '/catalog');
     var $ = cheerio.load(response.data);
